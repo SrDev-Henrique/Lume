@@ -11,7 +11,7 @@ export const sidebarLinks = [
   },
   {
     imgURL: "/icons/transaction.svg",
-    route: "/histórico-de-transações",
+    route: "/historico-de-transacoes",
     label: "Histórico de Transações",
   },
   {

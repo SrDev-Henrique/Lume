@@ -44,7 +44,7 @@ const BankCard = ({
             width={25}
             height={32}
             alt="mastercard"
-            className="ml-5"
+            className="ml-9"
           />
           <Image
             src="/icons/lines.svg"
