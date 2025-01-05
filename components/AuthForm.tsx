@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import Link from "next/link";
@@ -10,7 +11,6 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormControl,
   FormDescription,
   FormField,
   FormItem,
@@ -20,15 +20,17 @@ import {
 import { Input } from "@/components/ui/input";
 import CustomInput from "./CustomInput";
 import { authFormSchema } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 const AuthForm = ({ type }: { type: string }) => {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof authFormSchema>>({
     resolver: zodResolver(authFormSchema),
     defaultValues: {
-        email: "",
-        password: "",
+      email: "",
+      password: "",
     },
   });
 
@@ -36,7 +38,9 @@ const AuthForm = ({ type }: { type: string }) => {
   function onSubmit(values: z.infer<typeof authFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    setIsLoading(true);
     console.log(values);
+    setIsLoading(false);
   }
   return (
     <section className="auth-form">
@@ -58,8 +62,8 @@ const AuthForm = ({ type }: { type: string }) => {
             {user
               ? "Vincular Conta"
               : type === "sign-in"
-                ? "Criar Conta"
-                : "Entrar"}
+              ? "Entrar"
+              : "Criar Conta"}
             <p className="text-16 font-normal text-gray-600">
               {user
                 ? "Vincule sua conta para começar"
@@ -73,7 +77,10 @@ const AuthForm = ({ type }: { type: string }) => {
       ) : (
         <>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                
+                {type === 'sign-up'}
+
               <CustomInput
                 control={form.control}
                 name="email"
@@ -86,9 +93,33 @@ const AuthForm = ({ type }: { type: string }) => {
                 label="Senha"
                 placeholder="Digite sua senha"
               />
-              <Button type="submit">Entrar</Button>
+              <div className="flex flex-col gap-4">
+                <Button type="submit" className="form-btn" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" /> &nbsp;
+                      {type === "sign-in" ? "Entrando..." : "Criando Conta..."}{" "}
+                    </>
+                  ) : type === "sign-in" ? (
+                    "Entrar"
+                  ) : (
+                    "Criar Conta"
+                  )}
+                </Button>
+              </div>
             </form>
           </Form>
+          <footer className="flex justify-center gap-1">
+            <p className="text-14 font-normal text-gray-600">
+              {type === "sign-in" ? "Não tem uma conta?" : "Já tem uma conta?"}
+            </p>
+            <Link
+              className="form-link"
+              href={type === "sign-in" ? "/sign-up" : "/sign-in"}
+            >
+              {type === "sign-in" ? "Criar Conta" : "Entrar"}
+            </Link>
+          </footer>
         </>
       )}
     </section>
