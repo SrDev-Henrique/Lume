@@ -26,21 +26,40 @@ const AuthForm = ({ type }: { type: string }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof authFormSchema>>({
-    resolver: zodResolver(authFormSchema),
+  const formSchema = authFormSchema(type);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
+      dataNascimento: "",
+      cpf: "",
       email: "",
       password: "",
+      primeiroNome: "",
+      ultimoNome: "",
+      endereco1: "",
+      estado: "",
+      codigoPostal: "",
     },
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof authFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    console.log(values);
-    setIsLoading(false);
+    
+    try {
+      if (type === 'sign-up') {
+        
+      }
+
+      if (type === 'sign-in') {
+        
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   }
   return (
     <section className="auth-form">
@@ -77,9 +96,59 @@ const AuthForm = ({ type }: { type: string }) => {
       ) : (
         <>
           <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                
-                {type === 'sign-up'}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              {type === "sign-up" && (
+                <>
+                  <div className="flex gap-4">
+                    <CustomInput
+                      control={form.control}
+                      name="primeiroNome"
+                      label="Primeiro Nome"
+                      placeholder="Informe seu primeiro nome"
+                    />
+                    <CustomInput
+                      control={form.control}
+                      name="ultimoNome"
+                      label="Último Nome"
+                      placeholder="informe seu último nome"
+                    />
+                  </div>
+                  <CustomInput
+                    control={form.control}
+                    name="endereco1"
+                    label="Endereço"
+                    placeholder="Digite seu endereço"
+                  />
+                  <div className='flex gap-4'>
+                    <CustomInput
+                      control={form.control}
+                      name="estado"
+                      label="Estado"
+                      placeholder="Exemplo: SP"
+                    />
+                    <CustomInput
+                      control={form.control}
+                      name="codigoPostal"
+                      label="Código Postal"
+                      placeholder="Exemplo: 12345-678"
+                    />
+                  </div>
+                  <div className='flex gap-4'>
+                    <CustomInput
+                      control={form.control}
+                      name="dataNascimento"
+                      label="Data de Nascimento"
+                      placeholder="DD/MM/YYYY"
+                    />
+                    <CustomInput
+                      control={form.control}
+                      name="cpf"
+                      label="CPF"
+                      placeholder="Digite seu CPF"
+                    />
+                  </div>
+                </>
+              )}
 
               <CustomInput
                 control={form.control}
@@ -98,7 +167,9 @@ const AuthForm = ({ type }: { type: string }) => {
                   {isLoading ? (
                     <>
                       <Loader2 size={20} className="animate-spin" /> &nbsp;
-                      {type === "sign-in" ? "Entrando..." : "Criando Conta..."}{" "}
+                      {type === "sign-in"
+                        ? "Entrando..."
+                        : "Criando Conta..."}{" "}
                     </>
                   ) : type === "sign-in" ? (
                     "Entrar"

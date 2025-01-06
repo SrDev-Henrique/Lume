@@ -195,14 +195,91 @@ export const getTransactionStatus = (date: Date) => {
   return date > twoDaysAgo ? "Processing" : "Success";
 };
 
-export const authFormSchema = z.object({
-  email: z
-    .string()
-    .email("Por favor, insira um endereço de e-mail válido.")
-    .nonempty("O campo de e-mail não pode estar vazio.")
-    .transform((val) => val.toLowerCase()),
-  password: z
-    .string()
-    .min(8, "A senha deve ter pelo menos 8 caracteres.")
-    .nonempty("O campo de senha não pode estar vazio."),
-});
+export const authFormSchema = (type: string) =>
+  z.object({
+    // Ambos
+    email: z
+      .string()
+      .email("Por favor, insira um endereço de e-mail válido.")
+      .nonempty("O campo de e-mail não pode estar vazio.")
+      .transform((val) => val.toLowerCase()),
+    password: z
+      .string()
+      .min(8, "A senha deve ter pelo menos 8 caracteres.")
+      .nonempty("O campo de senha não pode estar vazio."),
+    // sign-up
+    primeiroNome:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .min(1, "Primeiro nome inválido.")
+            .nonempty("Primeiro nome inválido.")
+            .transform((val) => val.toLowerCase()),
+    ultimoNome:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .min(1, "Último nome inválido.")
+            .nonempty("Último nome inválido.")
+            .transform((val) => val.toLowerCase()),
+    endereco1:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .max(50, "Endereço inválido.")
+            .nonempty("Endereço inválido.")
+            .transform((val) => val.toLowerCase()),
+    estado:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .min(2, "Estado precisa ter no mínimo 2 caracteres.")
+            .max(2, "Estado precisa ter no máximo 2 caracteres.")
+            .nonempty("Estado inválido.")
+            .transform((val) => val.toLowerCase()),
+    codigoPostal:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .transform((val) =>
+              val.replace(/\D/g, "").replace(/^(\d{5})(\d{3})$/, "$1-$2").toLowerCase()
+            )
+            .refine((val) => /^\d{5}-\d{3}$/.test(val), {
+              message: "Código postal inválido",
+            }),
+    dataNascimento:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .max(10, "Data de nascimento precisa ter 10 dígitos.")
+            .transform((val) =>
+              val
+                .replace(/\D/g, "")
+                .replace(/^(\d{2})(\d{2})(\d{4})$/, "$1/$2/$3")
+                .toLowerCase()  
+            )
+            .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), {
+              message: "Data de nascimento inválida",
+            }),
+    cpf:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .max(14, "O CPF deve ter 11 dígitos.")
+            .transform((val) =>
+              val
+                .replace(/\D/g, "")
+                .replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")
+                .toLowerCase()
+            )
+            .refine((val) => /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(val), {
+              message: "CPF inválido",
+            }),
+  });
