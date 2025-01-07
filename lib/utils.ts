@@ -232,12 +232,20 @@ export const authFormSchema = (type: string) =>
             .max(50, "Endereço inválido.")
             .nonempty("Endereço inválido.")
             .transform((val) => val.toLowerCase()),
+    cidade:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .min(1, "Cidade inválida.")
+            .nonempty("Cidade inválida.")
+            .transform((val) => val.toLowerCase()),
     estado:
       type === "sign-in"
         ? z.string().optional()
         : z
             .string()
-            .min(2, "Estado precisa ter no mínimo 2 caracteres.")
+            .min(2, "Estado inválido.")
             .max(2, "Estado precisa ter no máximo 2 caracteres.")
             .nonempty("Estado inválido.")
             .transform((val) => val.toLowerCase()),
@@ -247,7 +255,10 @@ export const authFormSchema = (type: string) =>
         : z
             .string()
             .transform((val) =>
-              val.replace(/\D/g, "").replace(/^(\d{5})(\d{3})$/, "$1-$2").toLowerCase()
+              val
+                .replace(/\D/g, "")
+                .replace(/^(\d{5})(\d{3})$/, "$1-$2")
+                .toLowerCase()
             )
             .refine((val) => /^\d{5}-\d{3}$/.test(val), {
               message: "Código postal inválido",
@@ -262,7 +273,7 @@ export const authFormSchema = (type: string) =>
               val
                 .replace(/\D/g, "")
                 .replace(/^(\d{2})(\d{2})(\d{4})$/, "$1/$2/$3")
-                .toLowerCase()  
+                .toLowerCase()
             )
             .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), {
               message: "Data de nascimento inválida",

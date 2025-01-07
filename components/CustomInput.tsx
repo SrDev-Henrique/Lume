@@ -54,7 +54,7 @@ const CustomInput = ({
                 placeholder={placeholder}
                 className="input-class"
                 type={name === "password" ? "password" : "text"}
-                maxLength={name === "cpf" ? 14 : name === "dataNascimento" ? 10 : name === "codigoPostal" ? 9 : 50}
+                maxLength={name === "cpf" ? 14 : name === "dataNascimento" ? 10 : name === "codigoPostal" ? 9 : name === "estado" ? 2 : 50}
                 {...field}
                 onChange={(e) => {
                   const formattedValue = formatValue(name, e.target.value);
