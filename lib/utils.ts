@@ -214,32 +214,28 @@ export const authFormSchema = (type: string) =>
         : z
             .string()
             .min(1, "Primeiro nome inválido.")
-            .nonempty("Primeiro nome inválido.")
-            .transform((val) => val.toLowerCase()),
+            .nonempty("Primeiro nome inválido."),
     ultimoNome:
       type === "sign-in"
         ? z.string().optional()
         : z
             .string()
             .min(1, "Último nome inválido.")
-            .nonempty("Último nome inválido.")
-            .transform((val) => val.toLowerCase()),
+            .nonempty("Último nome inválido."),
     endereco1:
       type === "sign-in"
         ? z.string().optional()
         : z
             .string()
             .max(50, "Endereço inválido.")
-            .nonempty("Endereço inválido.")
-            .transform((val) => val.toLowerCase()),
+            .nonempty("Endereço inválido."),
     cidade:
       type === "sign-in"
         ? z.string().optional()
         : z
             .string()
             .min(1, "Cidade inválida.")
-            .nonempty("Cidade inválida.")
-            .transform((val) => val.toLowerCase()),
+            .nonempty("Cidade inválida."),
     estado:
       type === "sign-in"
         ? z.string().optional()
@@ -247,8 +243,7 @@ export const authFormSchema = (type: string) =>
             .string()
             .min(2, "Estado inválido.")
             .max(2, "Estado precisa ter no máximo 2 caracteres.")
-            .nonempty("Estado inválido.")
-            .transform((val) => val.toLowerCase()),
+            .nonempty("Estado inválido."),
     codigoPostal:
       type === "sign-in"
         ? z.string().optional()
@@ -258,7 +253,6 @@ export const authFormSchema = (type: string) =>
               val
                 .replace(/\D/g, "")
                 .replace(/^(\d{5})(\d{3})$/, "$1-$2")
-                .toLowerCase()
             )
             .refine((val) => /^\d{5}-\d{3}$/.test(val), {
               message: "Código postal inválido",
@@ -273,7 +267,6 @@ export const authFormSchema = (type: string) =>
               val
                 .replace(/\D/g, "")
                 .replace(/^(\d{2})(\d{2})(\d{4})$/, "$1/$2/$3")
-                .toLowerCase()
             )
             .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), {
               message: "Data de nascimento inválida",
@@ -288,7 +281,6 @@ export const authFormSchema = (type: string) =>
               val
                 .replace(/\D/g, "")
                 .replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")
-                .toLowerCase()
             )
             .refine((val) => /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(val), {
               message: "CPF inválido",

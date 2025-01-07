@@ -7,7 +7,7 @@ export async function createSessionClient() {
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
 
-  const session = (await cookies()).get("appwwrite-session");;
+  const session = (await cookies()).get("appwrite-session");;
   if (!session || !session.value) {
     throw new Error("No session");
   }
@@ -30,22 +30,13 @@ export async function createAdminClient() {
   return {
     get account() {
       return new Account(client);
-      },
-      get database() {
-          return new Databases(client)
-      },
-      get user() {
-          return new Users(client)
-      }
+    },
+    get database() {
+      return new Databases(client)
+    },
+    get user() {
+      return new Users(client)
+    }
   };
-}
-
-export async function getLoggedInUser() {
-  try {
-    const { account } = await createSessionClient();
-    return await account.get();
-  } catch (error) {
-    return null;
-  }
 }
 

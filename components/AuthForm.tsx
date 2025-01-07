@@ -54,6 +54,7 @@ const AuthForm = ({ type }: { type: string }) => {
     try {
       if (type === "sign-up") {
         const newUser = await signUp(data);
+
         setUser(newUser);
       }
 
@@ -120,7 +121,7 @@ const AuthForm = ({ type }: { type: string }) => {
                       control={form.control}
                       name="ultimoNome"
                       label="Último Nome"
-                      placeholder="informe seu último nome"
+                      placeholder="Informe seu último nome"
                     />
                   </div>
                   <CustomInput
