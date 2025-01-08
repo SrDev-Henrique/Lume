@@ -24,18 +24,27 @@ export const signUp = async (userData: SignUpParams) => {
 
     const fullName = `${primeiroNome} ${ultimoNome}`;
 
+    // console.log("tentando criar conta...")
+
     const newUserAccount = await account.create(
       ID.unique(),
       email,
       password,
       fullName
     );
+
+    console.log("conta criada", newUserAccount);
+
+    // console.log("tentando criar sessão...")
+
     const session = await account.createEmailPasswordSession(email, password);
+
+    // console.log("sessão criada", session);
 
     (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
       secure: true,
     });
 
@@ -51,9 +60,27 @@ export async function getLoggedInUser() {
 
     const user = await account.get();
 
+    // console.log("usuário logado", user);
+
     return parseStringify(user);
 
   } catch (error) {
-    console.log("Erro", error);
+    console.log(error)
+    return null
+  }
+}
+
+export const logOutAccount = async () => {
+  try {
+    const { account } = await createSessionClient();
+
+
+    (await cookies()).delete("appwrite-session");
+
+    await account.deleteSession("current");
+
+  } catch (error) {
+    console.error("Erro", error);
+    return null
   }
 }
