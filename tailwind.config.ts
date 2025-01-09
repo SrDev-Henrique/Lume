@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import type { Config } from "tailwindcss";
 
 const config = {
@@ -20,6 +21,7 @@ const config = {
     },
     extend: {
       colors: {
+        "bank-black": "#000000",
         fill: {
           1: "rgba(255, 255, 255, 0.10)",
         },
@@ -74,6 +76,7 @@ const config = {
         "gradient-mesh": "url('/icons/gradient-mesh.svg')",
         "bank-green-gradient":
           "linear-gradient(90deg, #01797A 0%, #489399 100%)",
+        "bank-black": "#000000",
       },
       boxShadow: {
         form: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
