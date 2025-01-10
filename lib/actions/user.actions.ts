@@ -1,41 +1,43 @@
 "use server";
 
-import { ID } from "node-appwrite";
+import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { cookies } from "next/headers";
 import { parseStringify } from "../utils";
 
-export const signIn = async ({ email, password }: signInProps) => {
+const {
+  APPWRITE_DATABASE_ID: DATABASE_ID,
+  APPWRITE_USER_COLLECTION_ID: USER_COLLECTION_ID,
+} = process.env;
+
+export const getUserInfo = async ({ userId }: getUserInfoProps) => {
   try {
-    const { account } = await createSessionClient();
+    const { database } = await createAdminClient();
 
-    const response = await account.createEmailPasswordSession(email, password);
+    console.log("Fetching user info for userId:", userId);
 
-    return parseStringify(response);
+    const user = await database.listDocuments(
+      DATABASE_ID!,
+      USER_COLLECTION_ID!,
+      [Query.equal("$id", [userId])] // Use the correct field name
+    );
+
+    console.log("User documents:", user.documents);
+
+    if (user.documents.length === 0) {
+      throw new Error("User not found");
+    }
+
+    return parseStringify(user.documents[0]);
   } catch (error) {
-    console.error("Erro", error);
+    console.log("Error in getUserInfo:", error);
+    return null;
   }
 };
 
-export const signUp = async (userData: SignUpParams) => {
-  const { email, password, primeiroNome, ultimoNome } = userData;
+export const signIn = async ({ email, password }: signInProps) => {
   try {
     const { account } = await createAdminClient();
-
-    const fullName = `${primeiroNome} ${ultimoNome}`;
-
-    // console.log("tentando criar conta...")
-
-    const newUserAccount = await account.create(
-      ID.unique(),
-      email,
-      password,
-      fullName
-    );
-
-    console.log("conta criada", newUserAccount);
-
-    // console.log("tentando criar sessão...")
 
     const session = await account.createEmailPasswordSession(email, password);
 
@@ -48,25 +50,67 @@ export const signUp = async (userData: SignUpParams) => {
       secure: true,
     });
 
-    return parseStringify(newUserAccount);
+    const user = await getUserInfo({ userId: session.userId });
+
+    return parseStringify(user);
   } catch (error) {
     console.error("Erro", error);
+  }
+};
+
+export const signUp = async ({ password, ...userData }: SignUpParams) => {
+  const { email, primeiroNome, ultimoNome } = userData;
+
+  let newUserAccount;
+
+  try {
+    const { account, database } = await createAdminClient();
+
+    newUserAccount = await account.create(
+      ID.unique(),
+      email,
+      password,
+      `${primeiroNome} ${ultimoNome}`
+    );
+
+    if (!newUserAccount) throw new Error("Error creating user");
+
+    const newUser = await database.createDocument(
+      DATABASE_ID!,
+      USER_COLLECTION_ID!,
+      ID.unique(),
+      {
+        ...userData,
+        userId: newUserAccount.$id
+      }
+    );
+
+    const session = await account.createEmailPasswordSession(email, password);
+
+    (await cookies()).set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    });
+
+    return parseStringify(newUser);
+  } catch (error) {
+    console.error("Error", error);
   }
 };
 
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient();
+    const result = await account.get();
 
-    const user = await account.get();
-
-    // console.log("usuário logado", user);
+    const user = await getUserInfo({ userId: result.$id });
 
     return parseStringify(user);
-
   } catch (error) {
-    console.log(error)
-    return null
+    console.log(error);
+    return null;
   }
 }
 
@@ -74,13 +118,11 @@ export const logOutAccount = async () => {
   try {
     const { account } = await createSessionClient();
 
-
     (await cookies()).delete("appwrite-session");
 
     await account.deleteSession("current");
-
   } catch (error) {
     console.error("Erro", error);
-    return null
+    return null;
   }
-}
+};

@@ -8,14 +8,8 @@ declare type SearchParamProps = {
 // ========================================
 
 declare type SignUpParams = {
-  primeiroNome?: string;
-  ultimoNome?: string;
-  endereco1?: string;
-  cidade?: string;
-  estado?: string;
-  codigoPostal?: string;
-  dataNascimento?: string;
-  cpf?: string;
+  primeiroNome: string;
+  ultimoNome: string;
   email: string;
   password: string;
 };
@@ -29,17 +23,9 @@ declare type User = {
   $id: string;
   email: string;
   userId: string;
-  dwollaCustomerUrl: string;
-  dwollaCustomerId: string;
-  firstName: string;
-  lastName: string;
+  primeiroNome: string;
+  ultimoNome: string;
   name: string;
-  address1: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  dateOfBirth: string;
-  ssn: string;
 };
 
 declare type NewUserParams = {
@@ -108,8 +94,8 @@ declare type CategoryCount = {
 };
 
 declare type Receiver = {
-  firstName: string;
-  lastName: string;
+  primeiroNome: string;
+  ultimoNome: string;
 };
 
 declare type TransferParams = {
@@ -125,8 +111,8 @@ declare type AddFundingSourceParams = {
 };
 
 declare type NewDwollaCustomerParams = {
-  firstName: string;
-  lastName: string;
+  primeiroNome: string;
+  ultimoNome: string;
   email: string;
   type: string;
   address1: string;

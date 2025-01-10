@@ -13,7 +13,7 @@ const Home = async () => {
           <HeaderBox
             type="greeting"
             title="Olá,"
-            user={loggedIn?.name || "Guest"}
+            user={loggedIn?.primeiroNome || "Guest"}
             subtext="Controle seus gastos e receitas de forma simples"
           />
 
